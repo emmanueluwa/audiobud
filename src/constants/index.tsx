@@ -76,7 +76,8 @@ export const audioData = [
     id: 4,
     title: "The meaning of health",
     description: "A long form dialogue about health",
-    imgUrl: "",
+    imgUrl:
+      "https://d7hftxdivxxvm.cloudfront.net/?quality=80&resize_to=width&src=https%3A%2F%2Fartsy-media-uploads.s3.amazonaws.com%2FKPP343CLh91oDfwz1MWaTw%252FStephane-ABOUDARAM_WEARECONTENTS_MIA-KARLOVA_PAD-LONDON24-.jpg&width=910",
   },
   {
     id: 5,
