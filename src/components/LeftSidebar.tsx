@@ -1,9 +1,16 @@
+"use client";
+
 import { sidebarLinks } from "@/constants";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 const LeftSidebar = () => {
+  const pathname = usePathname();
+  const route = useRouter();
+
   return (
     <section className="left_sidebar">
       <nav className="flex flex-col gap-6">
@@ -21,10 +28,22 @@ const LeftSidebar = () => {
             AudioBud
           </h1>
         </Link>
-        {sidebarLinks.map(({ route, label }) => {
+
+        {sidebarLinks.map(({ route_name, label, image }) => {
+          const isActive =
+            pathname === route_name || pathname.startsWith(`${route}/`);
+
           return (
-            <Link key={route} href={route}>
-              {label}
+            <Link
+              key={route_name}
+              href={route_name}
+              className={cn(
+                "flex gap-3 items-center py-4 max-lg:px-4 justify-center lg:justify-start",
+                { "bg-nav-focus border-r-4 border-red-1": isActive }
+              )}
+            >
+              {image}
+              <p>{label}</p>
             </Link>
           );
         })}
