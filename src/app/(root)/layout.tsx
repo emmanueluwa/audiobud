@@ -1,6 +1,6 @@
-import LeftSidebar from "../../src/components/LeftSidebar";
-import MobileNav from "../../src/components/MobileNav";
-import RightSidebar from "../../src/components/RightSidebar";
+import LeftSidebar from "../../components/LeftSidebar";
+import MobileNav from "../../components/MobileNav";
+import RightSidebar from "../../components/RightSidebar";
 import Image from "next/image";
 
 export default function RootLayout({
