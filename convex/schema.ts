@@ -24,8 +24,6 @@ export default defineSchema({
     .searchIndex("search_body", { searchField: "audiobudDescription" }),
   users: defineTable({
     email: v.string(),
-    imageUrl: v.string(),
     clerkId: v.string(),
-    name: v.string(),
   }),
 });

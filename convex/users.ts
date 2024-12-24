@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+
 import { internalMutation, query } from "./_generated/server";
 
 export const getUserById = query({
@@ -17,33 +18,33 @@ export const getUserById = query({
   },
 });
 
-//sort audiobuds by views, the sort users based on most audiobuds
-export const getTopUserByAudiobudCount = query({
+// this query is used to get the top user by podcast count. first the podcast is sorted by views and then the user is sorted by total podcasts, so the user with the most podcasts will be at the top.
+export const getTopUserByPodcastCount = query({
   args: {},
   handler: async (ctx) => {
     const user = await ctx.db.query("users").collect();
 
     const userData = await Promise.all(
       user.map(async (u) => {
-        const audiobuds = await ctx.db
+        const podcasts = await ctx.db
           .query("audiobuds")
           .filter((q) => q.eq(q.field("authorId"), u.clerkId))
           .collect();
 
-        const sortedAudiobuds = audiobuds.sort((a, b) => b.views - a.views);
+        const sortedPodcasts = podcasts.sort((a, b) => b.views - a.views);
 
         return {
           ...u,
-          totalAudiobuds: audiobuds.length,
-          audiobud: sortedAudiobuds.map((p) => ({
-            audiobudTitle: p.audiobudTitle,
-            audiobudId: p._id,
+          totalPodcasts: podcasts.length,
+          podcast: sortedPodcasts.map((p) => ({
+            podcastTitle: p.audiobudTitle,
+            podcastId: p._id,
           })),
         };
       })
     );
 
-    return userData.sort((a, b) => b.totalAudiobuds - a.totalAudiobuds);
+    return userData.sort((a, b) => b.totalPodcasts - a.totalPodcasts);
   },
 });
 
@@ -51,15 +52,11 @@ export const createUser = internalMutation({
   args: {
     clerkId: v.string(),
     email: v.string(),
-    imageUrl: v.string(),
-    name: v.string(),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert("users", {
       clerkId: args.clerkId,
       email: args.email,
-      imageUrl: args.imageUrl,
-      name: args.name,
     });
   },
 });
@@ -67,7 +64,6 @@ export const createUser = internalMutation({
 export const updateUser = internalMutation({
   args: {
     clerkId: v.string(),
-    imageUrl: v.string(),
     email: v.string(),
   },
   async handler(ctx, args) {
@@ -81,22 +77,21 @@ export const updateUser = internalMutation({
     }
 
     await ctx.db.patch(user._id, {
-      imageUrl: args.imageUrl,
       email: args.email,
     });
 
-    const audiobud = await ctx.db
-      .query("audiobuds")
-      .filter((q) => q.eq(q.field("authorId"), args.clerkId))
-      .collect();
+    // const podcast = await ctx.db
+    //   .query("audiobuds")
+    //   .filter((q) => q.eq(q.field("authorId"), args.clerkId))
+    //   .collect();
 
-    await Promise.all(
-      audiobud.map(async (p) => {
-        await ctx.db.patch(p._id, {
-          authorImageUrl: args.imageUrl,
-        });
-      })
-    );
+    // await Promise.all(
+    //   podcast.map(async (p) => {
+    //     await ctx.db.patch(p._id, {
+    //       authorImageUrl: args.imageUrl,
+    //     });
+    //   })
+    // );
   },
 });
 
