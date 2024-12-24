@@ -25,18 +25,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import GenerateAudiobud from "@/components/GenerateAudiobud";
+import GenerateThumbnail from "@/components/GenerateThumbnail";
+import { Loader } from "lucide-react";
+import { Id } from "../../../../convex/_generated/dataModel";
+
+//openai voice options
+const voiceOptions = ["alloy", "shimmer", "nova", "echo", "fable", "onyx"];
 
 const FormSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  audiobudTitle: z.string().min(2, {
+    message: "Title must be at least 2 characters.",
+  }),
+  audiobudDescription: z.string().min(2, {
+    message: "Description must be at least 2 characters.",
   }),
 });
 
 const CreateAudiobud = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [imageStorageId, setImageStorageId] = useState<Id<"_storage"> | null>(
+    null
+  );
+  const [imageUrl, setImageUrl] = useState("");
+
+  const [audioStorageId, setAudioStorageId] = useState<Id<"_storage"> | null>(
+    null
+  );
+  const [audioUrl, setAudioUrl] = useState("");
+  const [audioDuration, setAudioDuration] = useState(0);
+
+  const [voiceType, setVoiceType] = useState<string | null>(null);
+  const [voicePrompt, setVoicePrompt] = useState("");
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      audiobudTitle: "",
+      audiobudDescription: "",
     },
   });
 
@@ -67,11 +97,11 @@ const CreateAudiobud = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-2.5">
                   <FormLabel className="text-16 font-bold text-white-1">
-                    Username
+                    Title
                   </FormLabel>
                   <FormControl>
                     <Input
-                      className="input-class focus-visible:ring-red-1"
+                      className="input-class focus-visible:ring-offset-red-1"
                       placeholder="The meaning of life"
                       {...field}
                     />
@@ -86,19 +116,19 @@ const CreateAudiobud = () => {
                 Select Voice
               </Label>
 
-              <Select>
+              <Select onValueChange={(value) => setVoiceType(value)}>
                 <SelectTrigger
                   className={cn(
-                    "text-16 w-full border-none bg-black-1 text-gray-1"
+                    "text-16 w-full border-none bg-black-1 text-gray-1 focus-visible:ring-offset-red-1"
                   )}
                 >
                   <SelectValue
-                    placeholder="Select AI Voice"
+                    placeholder="Select Voice"
                     className="placeholder:text-gray-1"
                   />
                 </SelectTrigger>
                 <SelectContent className="text-16 border-none bg-black-1 font-bold text-white-1 focus:ring-red-1">
-                  {["voice ein", "voice zwei"].map((option) => (
+                  {voiceOptions.map((option) => (
                     <SelectItem
                       key={option}
                       value={option}
@@ -108,7 +138,63 @@ const CreateAudiobud = () => {
                     </SelectItem>
                   ))}
                 </SelectContent>
+                {voiceType && (
+                  <audio
+                    src={`/${voiceType}.mp3`}
+                    autoPlay
+                    className="hidden"
+                  />
+                )}
               </Select>
+            </div>
+
+            <FormField
+              control={form.control}
+              name="audiobudDescription"
+              render={({ field }) => (
+                <FormItem className="flex flex-col gap-2.5">
+                  <FormLabel className="text-16 font-bold text-white-1">
+                    Description
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="input-class focus-visible:ring-offset-red-1"
+                      placeholder="Write a short description"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-white-1" />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col pt-10">
+            <GenerateAudiobud
+              setAudioStorageId={setAudioStorageId}
+              setAudio={setAudioUrl}
+              voiceType={voiceType!}
+              audio={audioUrl}
+              voicePrompt={voicePrompt}
+              setVoicePrompt={setVoicePrompt}
+              setAudioDuration={setAudioDuration}
+            />
+
+            <GenerateThumbnail />
+
+            <div className="mt-10 w-full">
+              <Button
+                type="submit"
+                className="text-16 w-full bg-red-1 py-4 font-extrabold text-white-1 transition-all duration-500 hover:bg-black-1"
+              >
+                {isSubmitting ? (
+                  <>
+                    Submitting
+                    <Loader size={20} className="animate-spin ml-2" />
+                  </>
+                ) : (
+                  "Submit & Publish Audiobud"
+                )}
+              </Button>
             </div>
           </div>
         </form>
