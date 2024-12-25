@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,6 +30,10 @@ import GenerateAudiobud from "@/components/GenerateAudiobud";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
 import { Loader } from "lucide-react";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 //openai voice options
 const voiceOptions = ["alloy", "shimmer", "nova", "echo", "fable", "onyx"];
@@ -45,6 +48,8 @@ const FormSchema = z.object({
 });
 
 const CreateAudiobud = () => {
+  const { toast } = useToast();
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [imagePrompt, setImagePrompt] = useState("");
@@ -62,6 +67,8 @@ const CreateAudiobud = () => {
   const [voiceType, setVoiceType] = useState<string | null>(null);
   const [voicePrompt, setVoicePrompt] = useState("");
 
+  const createAudiobud = useMutation(api.audiobuds.createAudiobud);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -70,15 +77,44 @@ const CreateAudiobud = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      setIsSubmitting(true);
+
+      if (!audioUrl || !imageUrl || !voiceType) {
+        toast({ title: "Please generate audio image", variant: "destructive" });
+
+        setIsSubmitting(false);
+
+        throw new Error("Please generate provide audio and image");
+      }
+
+      const audiobud = await createAudiobud({
+        audiobudTitle: data.audiobudTitle,
+        audiobudDescription: data.audiobudDescription,
+        audioUrl,
+        imageUrl,
+        voiceType,
+        imagePrompt,
+        voicePrompt,
+        listens: 0,
+        audioDuration,
+        audioStorageId: audioStorageId!,
+        imageStorageId: imageStorageId!,
+      });
+
+      toast({ title: "Audiobud created" });
+      setIsSubmitting(false);
+
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "An error occurred while creating a audiobud",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   }
 
   return (

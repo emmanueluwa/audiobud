@@ -12,12 +12,11 @@ export default defineSchema({
     imageStorageId: v.optional(v.id("_storage")),
     author: v.string(),
     authorId: v.string(),
-    authorImageUrl: v.string(),
     voicePrompt: v.string(),
     imagePrompt: v.string(),
     voiceType: v.string(),
-    audioDuration: v.string(),
-    views: v.number(),
+    audioDuration: v.number(),
+    listens: v.number(),
   })
     .searchIndex("search_author", { searchField: "author" })
     .searchIndex("search_title", { searchField: "audiobudTitle" })

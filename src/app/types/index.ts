@@ -43,7 +43,6 @@ export interface AudiobudProps {
   imageStorageId: Id<"_storage"> | null;
   author: string;
   authorId: string;
-  authorImageUrl: string;
   voicePrompt: string;
   imagePrompt: string | null;
   voiceType: string;
@@ -94,7 +93,6 @@ export interface AudiobudDetailPlayerProps {
   audiobudId: Id<"audiobuds">;
   imageStorageId: Id<"_storage">;
   audioStorageId: Id<"_storage">;
-  authorImageUrl: string;
   authorId: string;
 }
 
