@@ -14,9 +14,9 @@ const Home = () => {
       <section className="flex flex-col gap-5">
         <h1 className="text-20 font-bold text-white-1">Trending Audiobuds</h1>
 
-        <div className="flex min-h-screen flex-col items-center justify-between p-24 text-white-1">
-          {/* {tasks?.map(({ _id, text }) => <div key={_id}>{text} hello</div>)} */}
-        </div>
+        {/* <div className="flex min-h-screen flex-col items-center justify-between p-24 text-white-1">
+          {tasks?.map(({ _id, text }) => <div key={_id}>{text} hello</div>)}
+        </div> */}
 
         <div className="audio_grid">
           {audioData.map(({ id, description, imgUrl, title }) => (
