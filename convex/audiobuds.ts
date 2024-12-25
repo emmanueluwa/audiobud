@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 //return url of storage file accessed by id
 export const getUrl = mutation({
@@ -48,5 +48,13 @@ export const createAudiobud = mutation({
     });
 
     return audiobud;
+  },
+});
+
+export const getTrendingAudiobuds = query({
+  handler: async (ctx) => {
+    const audiobuds = await ctx.db.query("audiobuds").collect();
+
+    return audiobuds;
   },
 });
