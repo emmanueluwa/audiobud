@@ -1,6 +1,5 @@
 "use client";
 import AudioCard from "../../components/AudioCard";
-import { audioData } from "../../constants";
 import React from "react";
 import { api } from "@/../convex/_generated/api";
 
@@ -8,6 +7,7 @@ import { useQuery } from "convex/react";
 
 const Home = () => {
   const trendingAudiobuds = useQuery(api.audiobuds.getTrendingAudiobuds);
+  console.log(trendingAudiobuds);
 
   return (
     <div className="mt-9 flex flex-col gap-9">
@@ -18,10 +18,10 @@ const Home = () => {
             ({ _id, imageUrl, audiobudTitle, audiobudDescription }) => (
               <AudioCard
                 key={_id}
-                imgUrl={imageUrl}
+                imgUrl={imageUrl!}
                 title={audiobudTitle}
                 description={audiobudDescription}
-                audioId={_id}
+                audiobudId={_id}
               />
             )
           )}

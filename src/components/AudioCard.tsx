@@ -1,18 +1,26 @@
+import { AudiobudCardProps } from "@/app/types";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const AudioCard = ({
   imgUrl,
   title,
   description,
-}: {
-  imgUrl: string;
-  title: string;
-  description: string;
-  audioId: number;
-}) => {
+  audiobudId,
+}: AudiobudCardProps) => {
+  const router = useRouter();
+
+  const handleListens = () => {
+    //increase listens
+
+    router.push(`/audiobuds/${audiobudId}`, {
+      scroll: true,
+    });
+  };
+
   return (
-    <div className="cursor-pointer">
+    <div className="cursor-pointer" onClick={handleListens}>
       <figure className="flex flex-col gap-2">
         <Image
           src={imgUrl}

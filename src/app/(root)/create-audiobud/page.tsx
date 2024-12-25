@@ -138,7 +138,7 @@ const CreateAudiobud = () => {
                   <FormControl>
                     <Input
                       className="input-class focus-visible:ring-offset-red-1"
-                      placeholder="The meaning of life"
+                      placeholder="Choose a title"
                       {...field}
                     />
                   </FormControl>
