@@ -9,15 +9,20 @@ import AudibudDetailPlayer from "@/components/AudibudDetailPlayer";
 import LoaderSpinner from "@/components/LoaderSpinner";
 import AudioCard from "@/components/AudioCard";
 import EmptyState from "@/components/EmptyState";
+import { useUser } from "@clerk/nextjs";
 
 const AudiobudDetails = ({
   params: { audiobudId },
 }: {
   params: { audiobudId: Id<"audiobuds"> };
 }) => {
+  const { user } = useUser();
+
   const audiobud = useQuery(api.audiobuds.getAudiobudById, {
     audiobudId,
   });
+
+  const isOwner = user?.id === audiobud?.authorId;
 
   const similarAudiobuds = useQuery(api.audiobuds.getAudiobudByVoiceType, {
     audiobudId,
@@ -43,7 +48,11 @@ const AudiobudDetails = ({
         </figure>
       </header>
 
-      <AudibudDetailPlayer />
+      <AudibudDetailPlayer
+        isOwner={isOwner}
+        audiobudId={audiobud._id}
+        {...audiobud}
+      />
 
       <p className="text-white-2 text-16 pb-8 pt-[45px] font-medium max-md:text-center">
         {audiobud?.audiobudDescription}
